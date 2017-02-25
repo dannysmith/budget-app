@@ -9,6 +9,7 @@ gem 'sinatra-contrib'
 gem 'mongoid', '~>6.0'
 gem 'dotenv', '~>2.1'
 gem 'dotenv-heroku', '~>0.0'
+gem 'money'
 
 # Server
 gem 'puma'

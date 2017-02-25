@@ -1,1 +1,7 @@
 <h1>Main Page</h1>
+
+<ul>
+  <% @users.each do |u| %>
+  <a href="/u/<%= u.username %>"><%= u.fullname %></a>
+  <% end %>
+</ul>

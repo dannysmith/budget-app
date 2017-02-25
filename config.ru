@@ -2,6 +2,7 @@ require 'bundler/setup'
 require 'sinatra/base'
 require 'dotenv'
 require 'mongoid'
+require 'money'
 
 # Load environment variables and libraries
 Dotenv.load

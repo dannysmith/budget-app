@@ -7,7 +7,27 @@
     <link rel="stylesheet" href="/styles.css"/>
   </head>
   <body>
-    <%= yield %>
+    <div class="ui secondary pointing menu">
+      <a class="item" href="/">
+        Home
+      </a>
+      <% @users.each do |u| %>
+      <a class="item" href="/u/<%= u.username %>">
+        <%= u.fullname %>
+      </a>
+      <% end %>
+      <div class="right menu">
+        <a class="ui item" href="/tags">
+          Your Tags
+        </a>
+        <a class="ui item" href="/logout">
+          Logout
+        </a>
+      </div>
+    </div>
+    <div class="page-wrapper">
+      <%= yield %>
+    </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.js" integrity="sha256-BDroGwBkg6DZmNigaeS6iJTGlEQotNI3ShuoRVatI78=" crossorigin="anonymous"></script>

@@ -1,0 +1,17 @@
+<h1>Your Tags</h1>
+
+<form id="newTagForm" class="ui form" method="post" action "/tags">
+  <div class="ui left icon input">
+    <input type="text" name="tagname" placeholder="New tag...">
+    <i class="tag icon"></i>
+  </div>
+  <input class="ui primary button" type="submit" value="Create Tag">
+</form>
+
+<% unless @tags.nil? || @tags.empty? %>
+  <div class="tag-cloud">
+    <% @tags.each do |tag| %>
+    <a class="ui tag label"><%= tag.name %></a>
+    <% end %>
+  </div>
+<% end %>

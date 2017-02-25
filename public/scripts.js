@@ -1,1 +1,2 @@
-$("#username").dropdown();
+// $("#username").dropdown();
+$('select.dropdown').dropdown();

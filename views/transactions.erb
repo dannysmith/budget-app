@@ -1,0 +1,69 @@
+<div class="transactions-wrapper">
+  <h1>Transactions for <%= @user.fullname %></h1>
+
+  <% unless @transactions.nil? || @transactions.empty? %>
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Transaction</th>
+        <th>Amount</th>
+        <th>Balance</th>
+        <th>Location</th>
+        <th>Tags</th>
+        <% if @user == logged_in_user %>
+        <th>Add Tag</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @transactions.each do |t| %>
+      <tr>
+        <td>
+          <% if t.counterparty_name %>
+            <h4 class="ui header">
+              <div class="content">
+                  <%= t.counterparty_name %>
+                  <div class="sub header"><%= t.counterparty_phone %></div>
+                </div>
+              </div>
+            </h4>
+          <% else %>
+          <h4 class="ui image header">
+            <img src="<%= t.merchant_logo %>" alt="<%= t.merchant_name %>" class="ui mini rounded image">
+            <div class="content">
+              <%= t.merchant_name %>
+              <div class="sub header"><%= t.monzo_category.capitalize %></div>
+            </div>
+          </h4>
+          <% end %>
+        </td>
+        <td><%= t.f_amount %></td>
+        <td><%= t.f_balance %></td>
+        <td><a href="https://www.google.co.uk/maps/@<%= t.merchant_lat %>,<%= t.merchant_long %>,<%= t.merchant_zoom %>z" target="_blank"><%= t.merchant_address %></a></td>
+        <td>
+          <% t.tags.each do |tag| %>
+          <a class="ui tag label"><%= tag.name %></a>
+          <% end %>
+        </td>
+
+
+        <% if @user == logged_in_user %>
+        <td>
+          <form action="/tags/add-to-tx" method="post">
+            <select class="ui search selection dropdown" name="tagname">
+              <% logged_in_user.tags.each do |tag| %>
+              <option></option>
+              <option value="<%= tag.name %>"><%= tag.name.capitalize %></option>
+              <% end %>
+            </select>
+            <input type="hidden" name="transaction_id" value="<%= t.id.to_s %>">
+            <input class="ui button compact" type="submit" value="+">
+          </form>
+        </td>
+        <% end %>
+
+      </tr>
+      <% end %>
+    </tbody>
+  <% end %>
+</div>

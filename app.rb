@@ -15,6 +15,7 @@ class BudgetApp < Sinatra::Base
 
     # Load Mongoid
     Mongoid.load! 'mongoid.yml'
+    Mongoid.raise_not_found_error = false
   end
 
   configure :development do
@@ -34,8 +35,12 @@ class BudgetApp < Sinatra::Base
       end
     end
 
-    def username
-      return session[:username]
+    def logged_in_user
+      User.find_by username: session[:username]
+    end
+
+    def money(amount, currency)
+      Money.new(amount, currency).format
     end
 
     def authenticate!
@@ -43,20 +48,66 @@ class BudgetApp < Sinatra::Base
     end
   end
 
+  before do
+    @users = User.all
+  end
 
+
+  ################# MAIN ROUTES #################
 
   get '/' do
     authenticate!
     erb :index
   end
 
+  get '/u/:username' do |username|
+    authenticate!
+    @user = User.find_by username: username
+
+    if @user
+      @transactions = @user.transactions
+      erb :transactions
+    else
+      redirect '/'
+    end
+  end
+
+  ################# TAG MANAGEMENT ROUTES #################
+
+  get '/tags' do
+    authenticate!
+    @user = logged_in_user
+    @tags = @user.tags
+    erb :tags
+  end
+
+  post '/tags' do
+    authenticate!
+    logged_in_user.create_tag params[:tagname]
+    redirect '/tags'
+  end
+
+  post '/tags/add-to-tx' do
+    authenticate!
+    tx = Transaction.find(params[:transaction_id])
+    tag = Tag.find_by name: params[:tagname]
+    if (tx.tags << tag)
+      redirect "/u/#{logged_in_user.username}"
+    end
+  end
+
+
+  ################# LOGIN ROUTES #################
+
   get '/login' do
     redirect '/' if logged_in?
-    erb :login
+    erb :login, layout: false
   end
 
   post '/login' do
-    if (params[:username] == "danny" && params[:password] == ENV['PASSWORD_DANNY']) || (params[:username] == "laurence" && params[:password] == ENV['PASSWORD_LAURENCE'])
+    user = User.find_by username: params[:username]
+
+    if (user && user.password == params[:password])
       session[:username] = params[:username]
       redirect '/'
     else
@@ -69,9 +120,20 @@ class BudgetApp < Sinatra::Base
     redirect '/login'
   end
 
-  post '/tx/:user' do |user|
+  ################# HANDLE WEBHOOKS #################
+
+  post '/tx/:username' do |username|
     halt(401, { message: "Unathorized"}.to_json) unless params[:token] == ENV['WEBHOOK_AUTH_TOKEN']
     data = JSON.parse(request.body.read)["data"]
-    Transaction.make user, data
+    Transaction.make username, data
+    status 201
+  end
+
+  ################# DEBUG ROUTES #################
+
+  if ENV['RACK_ENV'] == 'development'
+    get '/pry' do
+      binding.pry
+    end
   end
 end

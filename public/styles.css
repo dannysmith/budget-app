@@ -28,6 +28,29 @@ body {
   margin-bottom: 1rem;
 }
 
+.page-wrapper {
+  padding: 3rem;
+}
+
+h1 {
+  text-align: center;
+}
+
+.tag-cloud {
+  width: 90%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.tag-cloud a {
+  display: inline-block;
+}
+
+#newTagForm {
+  text-align: center;
+  margin: 2em;
+}
+
 @media screen and (min-width: 800px) {
   #login-form {
     max-width: 50%;

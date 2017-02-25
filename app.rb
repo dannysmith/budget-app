@@ -4,14 +4,18 @@ class BudgetApp < Sinatra::Base
     Dir[File.dirname(__FILE__) + "/#{dir}/*"].each { |f| require f }
   end
 
-  enable :sessions
-
   configure do
     use Rack::MethodOverride
 
     # Use SSL Enforcer
     # use Rack::SslEnforcer, only_hosts: ENV.fetch('BASE_DOMAIN')
-    # set :session_secret, ENV.fetch('SESSION_SECRET')
+    set :session_secret, ENV.fetch('SESSION_SECRET')
+
+    # Enable sinatra sessions
+    use Rack::Session::Cookie, key: '_rack_session',
+                               path: '/',
+                               expire_after: 2_592_000, # In seconds
+                               secret: settings.session_secret
 
     # Load Mongoid
     Mongoid.load! 'mongoid.yml'

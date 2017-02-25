@@ -16,6 +16,7 @@ Populate your `.env` file with the following environment variables:
 ```shell
 MONGODB_URI # The conntection URI for the Mongo instance to use
 WEBHOOK_AUTH_TOKEN # A random string
+SESSION_SECRET # A random string from which to seed session secrets
 ```
 
 Spin up the app, and open a console (you can sent a GET request to '/pry' to start an pry REPL). Create users for the app:
